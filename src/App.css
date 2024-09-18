@@ -6,6 +6,8 @@
 
 body {
   overflow-x: hidden !important;
-  scroll-behavior: smooth;
+  scroll-behavior: smooth !important;
+  background-color: #171A21 !important;
+  color: #fff !important;
 }
 
