@@ -1,70 +1,95 @@
-# Getting Started with Create React App
+## TodoMatic
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+### Overview
 
-## Available Scripts
+TodoMatic is a task management application built to help users organize their tasks efficiently. With a user-friendly interface, TodoMatic allows users to add, manage, and track tasks based on their completion status and scheduled time. The app features filtering options to display active, completed, or all tasks, providing users with a streamlined experience.
 
-In the project directory, you can run:
+### Hosted URL
 
-### `npm start`
+The application is live at: [https://todomatic-henna.vercel.app/](https://todomatic-henna.vercel.app/)
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+### Tech Stack
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+- **React**: A JavaScript library for building user interfaces.
+- 
+- **Chakra UI**: A modular, accessible React component library for styling.
+  
+### Features
 
-### `npm test`
+1. **Add New Tasks**: Users can input a task description and set a time for task execution.
+2. **Task Status Management**: 
+   - **Active Tasks**: Tasks within 20 minutes of the current time are marked as "active."
+   - **Completed Tasks**: Users can mark tasks as complete, which moves them to the "Completed" tab.
+3. **Delete Tasks**: Users can remove tasks they no longer need.
+4. **Task Filtering**: Users can filter tasks based on their status—All, Active, or Completed.
+5. **Responsive Design**: Optimized for all device sizes, from mobile to desktop.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+### Technologies Used
 
-### `npm run build`
+- **React**: For building the app’s interface and managing states.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+- **Chakra UI**: For styling and UI components, such as buttons, modals, and forms.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+- **Day.js**: For managing date and time-related functionalities.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+- **Vercel**: Used for deployment, providing a fast and reliable hosting platform.
 
-### `npm run eject`
+### How to Use TodoMatic
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+1. **Adding a Task**:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+   - Enter a task description in the input field.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+   - Click the "Add" button, which opens a modal.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+   - In the modal, set the task’s date and time using the datetime picker and click "Add Task."
 
-## Learn More
+3. **Marking a Task as Complete**:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+   - In the task list, active tasks have a "Mark Complete" button.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+   - Click this button to mark the task as completed, which moves it to the "Completed" tab.
 
-### Code Splitting
+5. **Deleting a Task**:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+   - To delete a task, click the "Delete" button next to it. This will remove it from the task list.
 
-### Analyzing the Bundle Size
+7. **Filtering Tasks**:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+   - The filtering options at the top (All, Active, Completed) allow users to switch between task views.
 
-### Making a Progressive Web App
+### Components
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+#### Main Component
 
-### Advanced Configuration
+The main functionality of the application is handled within this component:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+- **Task Management**: Users can add, edit, delete, and mark tasks as complete.
 
-### Deployment
+- **Modals**: The app uses Chakra UI’s modal component to handle task input, including specifying the task time.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+- **Task Filtering**: Tasks are filtered based on their status (all, active, completed), allowing users to manage their to-dos effectively.
 
-### `npm run build` fails to minify
+#### Task Object Structure
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Each task consists of the following properties:
+
+- `id`: Unique identifier for each task.
+
+- `label`: The task description.
+
+- `time`: Date and time when the task is expected to be done.
+
+- `status`: Task state, either `active` or `completed`.
+
+### Future Features
+
+- **Task Editing**: Ability to edit existing tasks.
+
+- **Reminders**: Notifications or reminders for tasks nearing their scheduled time.
+
+- **Data Persistence**: Adding local storage or database support to maintain tasks across sessions.
+
+### Conclusion
+
+TodoMatic simplifies task management with features like task filtering, active task detection, and task status updates. Try it out today at [https://todomatic-henna.vercel.app/](https://todomatic-henna.vercel.app/) to start organizing your tasks efficiently!
