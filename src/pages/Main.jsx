@@ -1,46 +1,53 @@
 import React, { useState } from 'react';
-import { ChakraProvider, Heading, Text, Box, Button, Input, FormControl, Checkbox, Modal, ModalOverlay, ModalContent, ModalHeader, ModalFooter, ModalBody, ModalCloseButton, useDisclosure, useToast } from '@chakra-ui/react';
+import { ChakraProvider, Heading, Text, Box, Button, Input, FormControl, Checkbox, Modal, ModalOverlay, ModalContent, ModalHeader, ModalCloseButton, ModalBody, ModalFooter, useDisclosure } from '@chakra-ui/react';
 import { theme } from '../components/element/CustomButton';
 import { FaSmile } from 'react-icons/fa';
+import dayjs from 'dayjs';
+import isBetween from 'dayjs/plugin/isBetween';
+
+// Extend dayjs with the isBetween plugin
+dayjs.extend(isBetween);
 
 const Main = () => {
     const [tasks, setTasks] = useState([]);
     const [taskInput, setTaskInput] = useState('');
-    const [modalTask, setModalTask] = useState(null);
-    const [filter, setFilter] = useState('all');
+    const [taskTime, setTaskTime] = useState('');
     const { isOpen, onOpen, onClose } = useDisclosure();
-    const toast = useToast();
+    const [filter, setFilter] = useState('all');
 
+    // Add task with timing
     const addTask = () => {
-        if (taskInput.trim()) {
-            setTasks([...tasks, { id: tasks.length + 1, label: taskInput, status: 'pending' }]);
+        if (taskInput.trim() && taskTime) {
+            setTasks([
+                ...tasks,
+                { id: tasks.length + 1, label: taskInput, time: taskTime, status: 'active' }
+            ]);
             setTaskInput('');
-            toast({
-                title: "Task added.",
-                description: "You've successfully added a new task.",
-                status: "success",
-                duration: 5000,
-                isClosable: true,
-            });
+            setTaskTime('');
+            onClose(); 
         }
     };
 
+    // Mark task as completed
+    const markTaskComplete = (id) => {
+        setTasks(tasks.map(task =>
+            task.id === id ? { ...task, status: 'completed' } : task
+        ));
+    };
+
+    // Delete task
     const deleteTask = (id) => {
         setTasks(tasks.filter((task) => task.id !== id));
-        toast({
-            title: "Task deleted.",
-            description: "The task has been removed.",
-            status: "warning",
-            duration: 5000,
-            isClosable: true,
-        });
     };
 
-    const handleStatusChange = (id, status) => {
-        setTasks(tasks.map(task => task.id === id ? { ...task, status } : task));
-    };
-
-    const filteredTasks = tasks.filter(task => filter === 'all' || task.status === filter);
+    // Filter tasks
+    const now = dayjs();
+    const activeTasks = tasks.filter(task =>
+        task.status === 'active' &&
+        dayjs(task.time).isBetween(now.subtract(20, 'minute'), now)
+    );
+    const completedTasks = tasks.filter(task => task.status === 'completed');
+    const displayedTasks = filter === 'all' ? tasks : filter === 'active' ? activeTasks : completedTasks;
 
     return (
         <ChakraProvider theme={theme}>
@@ -66,7 +73,7 @@ const Main = () => {
                             variant="solid"
                             flex="1"
                             minW="100%"
-                            onClick={addTask}
+                            onClick={onOpen}
                         >
                             Add
                         </Button>
@@ -83,13 +90,13 @@ const Main = () => {
                     gap={4}
                     mb={8}
                 >
-                    <Button size="lg" variant="solid" colorScheme="red" flex="1" minW="120px" onClick={() => setFilter('all')}>
+                    <Button size="lg" variant="solid" colorScheme={filter === 'all' ? 'teal' : 'gray'} flex="1" minW="120px" onClick={() => setFilter('all')}>
                         All
                     </Button>
-                    <Button size="lg" variant="solid" colorScheme="yellow" flex="1" minW="120px" onClick={() => setFilter('active')}>
+                    <Button size="lg" variant="solid" colorScheme={filter === 'active' ? 'yellow' : 'gray'} flex="1" minW="120px" onClick={() => setFilter('active')}>
                         Active
                     </Button>
-                    <Button size="lg" variant="solid" colorScheme="green" flex="1" minW="120px" onClick={() => setFilter('completed')}>
+                    <Button size="lg" variant="solid" colorScheme={filter === 'completed' ? 'green' : 'gray'} flex="1" minW="120px" onClick={() => setFilter('completed')}>
                         Completed
                     </Button>
                 </Box>
@@ -100,42 +107,56 @@ const Main = () => {
                         <Heading mb={4}>
                             Let's get started! <FaSmile style={{ display: 'inline', marginLeft: '8px' }} />
                         </Heading>
+                        <Text>Add a new task to begin</Text>
                     </Box>
                 ) : (
                     <Box textAlign="left">
-                        <Heading mb={4}>{filteredTasks.length} {filteredTasks.length > 1 ? 'Tasks' : 'Task'} Remaining</Heading>
+                        <Heading mb={4}>{tasks.length} {tasks.length > 1 ? 'Tasks' : 'Task'} Remaining</Heading>
 
                         {/* Task List */}
                         <Box>
-                            {filteredTasks.map((task) => (
+                            {displayedTasks.map((task) => (
                                 <Box key={task.id} mb={4}>
                                     <Box display="flex" justifyContent="space-between" alignItems="center" gap={4}>
-                                        <Checkbox isChecked={task.status === 'completed'} onChange={() => handleStatusChange(task.id, task.status === 'completed' ? 'active' : 'completed')}>
+                                        <Checkbox isChecked={task.status === 'completed'}>
                                             <Text>{task.label}</Text>
                                         </Checkbox>
                                         <Box display="flex" gap={2}>
-                                            <Button
-                                                size="sm"
-                                                variant="outline"
-                                                flex="1"
-                                                minW="40px"
-                                                onClick={() => {
-                                                    setModalTask(task);
-                                                    onOpen();
-                                                }}
-                                            >
-                                                Edit
-                                            </Button>
-                                            <Button
-                                                size="sm"
-                                                variant="solid"
-                                                colorScheme="red"
-                                                flex="1"
-                                                minW="40px"
-                                                onClick={() => deleteTask(task.id)}
-                                            >
-                                                Delete
-                                            </Button>
+                                            {task.status === 'active' ? (
+                                                <>
+                                                    <Button
+                                                        size="md"
+                                                        variant="outline"
+                                                        borderColor="white"
+                                                        color="white"
+                                                        flex="1"
+                                                        minW="40px"
+                                                    >
+                                                        Edit
+                                                    </Button>
+                                                    <Button
+                                                        size="md"
+                                                        variant="solid"
+                                                        colorScheme="red"
+                                                        flex="1"
+                                                        minW="40px"
+                                                        onClick={() => deleteTask(task.id)}
+                                                    >
+                                                        Delete
+                                                    </Button>
+                                                </>
+                                            ) : (
+                                                <Button
+                                                    size="md"
+                                                    variant="solid"
+                                                    colorScheme="green"
+                                                    flex="1"
+                                                    minW="40px"
+                                                    onClick={() => markTaskComplete(task.id)}
+                                                >
+                                                    Mark Complete
+                                                </Button>
+                                            )}
                                         </Box>
                                     </Box>
                                 </Box>
@@ -143,50 +164,30 @@ const Main = () => {
                         </Box>
                     </Box>
                 )}
-            </Box>
 
-            {/* Modal for Editing Tasks */}
-            {modalTask && (
-                <Modal isOpen={isOpen} onClose={() => { onClose(); setModalTask(null); }}>
+                {/* Modal for Task Timing */}
+                <Modal isOpen={isOpen} onClose={onClose}>
                     <ModalOverlay />
-                    <ModalContent>
-                        <ModalHeader>Edit Task</ModalHeader>
+                    <ModalContent bg="black" color="white">
+                        <ModalHeader>Add Task Time</ModalHeader>
                         <ModalCloseButton />
                         <ModalBody>
                             <FormControl>
                                 <Input
-                                    type="text"
-                                    placeholder="Edit your task..."
-                                    value={modalTask.label}
-                                    onChange={(e) => setModalTask({ ...modalTask, label: e.target.value })}
+                                    type="datetime-local"
+                                    value={taskTime}
+                                    onChange={(e) => setTaskTime(e.target.value)}
                                 />
                             </FormControl>
                         </ModalBody>
                         <ModalFooter>
-                            <Button colorScheme="blue" onClick={() => {
-                                setTasks(tasks.map(task => task.id === modalTask.id ? modalTask : task));
-                                onClose();
-                                setModalTask(null);
-                                toast({
-                                    title: "Task updated.",
-                                    description: "The task has been updated successfully.",
-                                    status: "info",
-                                    duration: 5000,
-                                    isClosable: true,
-                                });
-                            }}>
-                                Save
-                            </Button>
-                            <Button colorScheme="gray" onClick={() => {
-                                onClose();
-                                setModalTask(null);
-                            }} ml={3}>
-                                Cancel
+                            <Button colorScheme="teal" onClick={addTask}>
+                                Add Task
                             </Button>
                         </ModalFooter>
                     </ModalContent>
                 </Modal>
-            )}
+            </Box>
         </ChakraProvider>
     );
 };
