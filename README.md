@@ -11,7 +11,7 @@ The application is live at: [https://todomatic-henna.vercel.app/](https://todoma
 ### Tech Stack
 
 - **React**: A JavaScript library for building user interfaces.
-- 
+ 
 - **Chakra UI**: A modular, accessible React component library for styling.
   
 ### Features
